@@ -1,11 +1,13 @@
-FROM jmoati/php8-cli-cuda:devel-cudnn8-11.5.0
+FROM registry.moati.net/docker/php-cuda:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y && \
-    apt-get install -y cmake libbz2-dev libx11-dev libopenblas-dev liblapack-dev
+    apt-get install -y cmake libbz2-dev libx11-dev libopenblas-dev liblapack-dev libheif-dev libjpeg-dev dcraw libmagickwand-dev libmagickcore-dev
 
-RUN cd /opt && \
+RUN pecl install imagick && \
+    docker-php-ext-enable imagick && \
+    cd /opt && \
     git clone https://github.com/davisking/dlib.git && \
     cd dlib/dlib && \
     mkdir build && \

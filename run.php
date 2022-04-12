@@ -19,7 +19,6 @@ $models = [
     ],
 ];
 
-
 foreach ($models as $modelName => $modelBag) {
     printf("Processing %s model\n", $modelName);
     $bz2_filename = array_values(array_slice(explode("/", $modelBag["uri"]), -1))[0];
@@ -81,16 +80,20 @@ foreach (Finder::create()->in(__DIR__ . '/images/')->files() as $file) {
     file_put_contents('data.json', json_encode($faces));
 }
 
+
 $data = json_decode(file_get_contents('data.json'), true);
 
 $edges = [];
 for ($i = 0, $l = count($data); $i < $l; ++$i) {
     if ($data[$i]['detection_confidence'] < 0.99) {
-        $edges[] = [$i, $i];
         continue;
     }
     
     foreach ($data as $offset => $face) {
+        if ($offset <= $i)  {
+            continue;
+        }
+        
         if ($i === $offset || $face['detection_confidence'] < 0.99) {
             continue;
         }
@@ -101,7 +104,5 @@ for ($i = 0, $l = count($data); $i < $l; ++$i) {
     }
 }
 
-// Don t work ...
-$newChineseClustersByIndex = dlib_chinese_whispers($edges);
-dd($newChineseClustersByIndex);
 
+dd($edges);

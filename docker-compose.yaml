@@ -2,8 +2,18 @@ version: "3.7"
 
 services:
   app:
-    build: "./dist/docker/app"
+    build: "./dist/docker/app_cuda"
     volumes:
       - ".:/app"
     ports:
     - "1337:1337"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - "NVIDIA_DRIVER_CAPABILITIES=video,compute,utility"
+      - "NVIDIA_VISIBLE_DEVICES=all"
